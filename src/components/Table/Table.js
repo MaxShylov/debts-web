@@ -1,100 +1,58 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useEffect } from 'react';
 import AntTable from 'antd/lib/table';
-import uniqBy from 'lodash/uniqBy';
-import sum from 'lodash/sum';
+
+import { api, actions, context } from 'services';
 
 import styles from './Table.module.scss';
-import { CellNumber } from './components';
+import { generateColumns, generateDataSource } from './helpers';
 
 function onChange(pagination, filters, sorter, extra) {
+  // TODO will save to localStorage
   console.log('params', pagination, filters, sorter, extra);
 }
 
-export const Table = ({ data }) => {
-  const dataSource = data;
-  const filtersName = data.map(({ name }) => ({ text: name, value: name }));
-  const filtersLogin = data.map(({ login }) => ({ text: login, value: login }));
-  const filtersTotal = uniqBy(
-    data.map(({ total }) => ({
-      text: total ? 'Owed' : 'Free',
-      value: !total,
-    })),
-    'value',
-  );
+export const Table = () => {
+  const {
+    state: { loading, data },
+    dispatch,
+  } = useContext(context);
+  const columns = generateColumns(data);
+  const dataSource = generateDataSource(data);
 
-  const otherColumns = data.map(item => ({
-    title: item.name,
-    dataIndex: `debts.${item.login}`,
-    align: 'center',
-    render: text => <CellNumber num={text} />,
-  }));
+  useEffect(() => {
+    dispatch({ type: actions.getDebtsRequest });
 
-  const countDebts = {};
+    const fetchData = async () => {
+      const { data } = await api.getDebts();
 
-  for (let i = 0; i < data.length; i++) {
-    const { login } = data[i];
+      if (data.status === 'error') {
+        dispatch({
+          type: actions.getDebtsFailure,
+          payload: { error: data.error },
+        });
+      }
 
-    countDebts[login] = sum(data.map(item => item.debts[login]));
-  }
+      dispatch({
+        type: actions.getDebtsSuccess,
+        payload: { data: data.data },
+      });
+    };
 
-  dataSource.push({
-    _id: 'count',
-    name: 'Count',
-    login: null,
-    total: sum(data.map(item => item.total)),
-    debts: countDebts,
-  });
-
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      filters: filtersName,
-      fixed: 'left',
-      width: 80,
-      onFilter: (value, record) => record.name === value,
-    },
-    {
-      title: 'Login',
-      dataIndex: 'login',
-      filters: filtersLogin,
-      fixed: 'left',
-      width: 100,
-      onFilter: (value, record) => record.login === value,
-    },
-    ...otherColumns,
-    {
-      title: 'Total',
-      dataIndex: 'total',
-      filters: filtersTotal,
-      fixed: 'right',
-      width: 75,
-      align: 'center',
-      render: text => <CellNumber num={text} />,
-      onFilter: (value, record) => !record.total === value,
-    },
-  ];
+    fetchData();
+  }, [dispatch]);
 
   return (
     <AntTable
       className={styles.table}
-      rowKey="_id"
+      rowKey='_id'
       size='small'
+      loading={loading}
       bordered
       pagination={false}
       columns={columns}
       dataSource={dataSource}
       onChange={onChange}
-      scroll={{ x: true}}
+      scroll={{ x: true }}
     />
   );
-};
-
-Table.propTypes = {
-  data: PropTypes.array,
-};
-
-Table.defaultProps = {
-  data: [],
 };

@@ -1,44 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useReducer } from 'react';
 import Layout from 'antd/lib/layout';
 
-import styles from './App.module.scss';
-import { Error, Table } from 'components';
+import { Error, Footer, Header, Table } from 'components';
+import { initialState, reducer, context as Context } from 'services';
 
-const { Header, Footer, Content } = Layout;
+import styles from './App.module.scss';
+
+const { Content } = Layout;
 
 const App = () => {
-  const [response, setResponse] = useState({});
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await axios.get('http://138.68.101.110:8080/debts');
-      setResponse(data);
-    };
-    fetchData();
-  }, []);
-
-  if (response.status === 'error') {
-    return <Error message={response.error} />;
-  }
-
-  //TODO add version to Footer
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <Layout className={styles.wrap}>
-      <Header className={styles.header}>
-        Debts
-      </Header>
-      <Content className={styles.contentWrap}>
-        <Layout className={styles.contentLayout}>
-          <Content>
-            <Table data={response.data} />
-          </Content>
-        </Layout>
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>
-        Debts v.0.1.0 ©2020 Created by Max Shylov
-      </Footer>
+      <Context.Provider value={{ state, dispatch }}>
+        <Header />
+
+        <Content className={styles.contentWrap}>
+          <Layout className={styles.contentLayout}>
+            <Content>
+              <Table />
+            </Content>
+          </Layout>
+        </Content>
+
+        <Footer />
+
+        <Error />
+      </Context.Provider>
     </Layout>
   );
 };
