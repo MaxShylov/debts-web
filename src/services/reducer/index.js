@@ -1,6 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 
-const tableFilters = JSON.parse(localStorage.tableFilters || '{}');
+const { chatId, tableFilters: tFilters = '{}' } = localStorage;
+const tableFilters = JSON.parse(tFilters);
 
 export const initialState = {
   data: [],
@@ -8,6 +9,7 @@ export const initialState = {
   error: null,
   tableFilters,
   saveFilters: !isEmpty(tableFilters),
+  loggedIn: !!chatId,
 };
 
 export const actions = {
@@ -16,10 +18,14 @@ export const actions = {
   getDebtsFailure: 'getDebtsFailure',
   setTableFilters: 'setTableFilters',
   toggleSaveFilters: 'toggleSaveFilters',
+  setLogInStatus: 'setLogInStatus',
 };
 
 export const reducer = (state, action) => {
-  const { type, payload: { data, error, tableFilters } = {} } = action;
+  const {
+    type,
+    payload: { data, error, tableFilters, logInStatus } = {},
+  } = action;
 
   switch (type) {
     case actions.getDebtsRequest:
@@ -55,6 +61,11 @@ export const reducer = (state, action) => {
         saveFilters: !state.saveFilters,
       };
 
+    case actions.setLogInStatus:
+      return {
+        ...state,
+        loggedIn: logInStatus,
+      };
 
     default:
       return state;

@@ -9,5 +9,5 @@ const baseApi = axios.create({
 });
 
 export const api = {
-  getDebts: () => baseApi.get(`/debts?chatId=${chatId}`),
+  getDebts: id => baseApi.get(`/debts?chatId=${chatId || id}`),
 };

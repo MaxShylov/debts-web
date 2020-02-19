@@ -1,7 +1,7 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useReducer } from 'react';
 import Layout from 'antd/lib/layout';
 
-import { Error, Footer, Header, Table } from 'components';
+import { Error, Footer, Header, Login, Table } from 'components';
 import { initialState, reducer, context as Context } from 'services';
 
 import styles from './App.module.scss';
@@ -14,19 +14,25 @@ const App = () => {
   return (
     <Layout className={styles.wrap}>
       <Context.Provider value={{ state, dispatch }}>
-        <Header />
+        {!state.loggedIn ? (
+          <Login />
+        ) : (
+          <>
+            <Header />
 
-        <Content className={styles.contentWrap}>
-          <Layout className={styles.contentLayout}>
-            <Content>
-              <Table />
+            <Content className={styles.contentWrap}>
+              <Layout className={styles.contentLayout}>
+                <Content>
+                  <Table />
+                </Content>
+              </Layout>
             </Content>
-          </Layout>
-        </Content>
 
-        <Footer />
+            <Footer />
 
-        <Error />
+            <Error />
+          </>
+        )}
       </Context.Provider>
     </Layout>
   );
