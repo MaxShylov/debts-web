@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from 'antd/lib/layout';
 
-import { ButtonReload } from 'components';
+import { ButtonReload, ButtonSaveFilters } from 'components';
 
 import styles from './Header.module.scss';
 
@@ -13,6 +13,7 @@ export const Header = () => {
       <h1>Debts</h1>
 
       <div className={styles.action}>
+        <ButtonSaveFilters />
         <ButtonReload />
       </div>
     </AntHeader>

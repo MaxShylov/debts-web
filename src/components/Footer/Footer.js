@@ -9,7 +9,7 @@ export const Footer = () => {
   //TODO add version to Footer
   return (
     <AntFooter className={styles.footer}>
-      Debts v.0.2.0 ©2020 Created by Max Shylov
+      Debts v.1.0.0 ©2020 Created by Max Shylov
     </AntFooter>
   );
 };

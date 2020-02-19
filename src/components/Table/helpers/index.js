@@ -4,7 +4,7 @@ import sum from 'lodash/sum';
 
 import { CellNumber } from '../components';
 
-export const generateColumns = data => {
+export const generateColumns = (data, tableFilters) => {
   const columnData = [...data];
   const filtersName = columnData.map(item => ({
     text: item.name,
@@ -35,6 +35,7 @@ export const generateColumns = data => {
       title: 'Name',
       dataIndex: 'name',
       filters: filtersName,
+      defaultFilteredValue: tableFilters.name,
       fixed: 'left',
       width: 80,
       onFilter: (value, record) => record.name === value,
@@ -43,6 +44,7 @@ export const generateColumns = data => {
       title: 'Login',
       dataIndex: 'login',
       filters: filtersLogin,
+      defaultFilteredValue: tableFilters.login,
       fixed: 'left',
       width: 100,
       onFilter: (value, record) => record.login === value,
@@ -52,6 +54,7 @@ export const generateColumns = data => {
       title: 'Total',
       dataIndex: 'total',
       filters: filtersTotal,
+      defaultFilteredValue: tableFilters.total,
       fixed: 'right',
       width: 75,
       align: 'center',

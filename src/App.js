@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import Layout from 'antd/lib/layout';
 
 import { Error, Footer, Header, Table } from 'components';

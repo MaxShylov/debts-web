@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import Button from 'antd/lib/button';
+import Tooltip from 'antd/lib/tooltip';
 
 import { actions, api, context } from 'services';
 
@@ -28,11 +29,8 @@ export const ButtonReload = () => {
   };
 
   return (
-    <Button
-      shape='circle'
-      icon='sync'
-      loading={loading}
-      onClick={handleClick}
-    />
+    <Tooltip placement='bottom' title='Click to reload data'>
+      <Button icon='sync' loading={loading} onClick={handleClick} />
+    </Tooltip>
   );
 };
